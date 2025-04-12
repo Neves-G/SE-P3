@@ -8,32 +8,15 @@ app = Dash(__name__, assets_folder='assets', suppress_callback_exceptions=True)
 app.title = "PV Panel Detection"
 server = app.server
 
-# Graph and table generation functions
-def generate_table(dataframe, max_rows=10, style1={'width': '100%', 'tableLayout': 'auto'}, style2={'overflowX': 'auto', 'display': 'block', 'maxWidth': '100%'}):
-    return html.Div([
-        html.Div([
-            html.Table([
-                html.Thead(
-                    html.Tr([html.Th(dataframe.index.name)] +
-                            [html.Th(col) for col in dataframe.columns])
-                ),
-                html.Tbody([
-                    html.Tr([html.Td(dataframe.index[i])] +
-                            [html.Td(dataframe.iloc[i][col]) for col in dataframe.columns])
-                    for i in range(min(len(dataframe), max_rows))
-                ])
-            ], style=style1)  # Allow flexible column widths
-        ], style=style2)  # Horizontal scroll for the table only
-    ])
-
+# Graph generation functions
 def generate_graph(dataframe):
     return px.line(dataframe)
 
 # Sample data for demonstration
-testing_images = [f"/assets/Predictions_s/{path}" for path in os.listdir("dash-app/assets/Predictions_s")]  # Replace with actual paths
-training_images = [f"/assets/Batch/{path}" for path in os.listdir("dash-app/assets/Batch")]  # Replace with actual paths
+testing_images = [f"assets/Predictions_s/{path}" for path in os.listdir("assets/Predictions_s")]  # Replace with actual paths
+training_images = [f"assets/Batch/{path}" for path in os.listdir("assets/Batch")]  # Replace with actual paths
 
-results_df = pd.read_csv("dash-app/run/Run_s/detect/train/results.csv")
+results_df = pd.read_csv("run/Run_s/detect/train/results.csv")
 results_df.rename(columns={"epoch": "Epoch"}, inplace=True)
 results_df.set_index("Epoch", inplace=True)
 results_df.drop(columns=["time"], inplace=True)
